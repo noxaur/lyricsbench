@@ -56,6 +56,18 @@ const patched = patchReactRouterConfig(`export default {\n  ssr: true,\n} satisf
 assert(patched.includes('basename: "/benches/grok-4.6"'), "rr config basename missing")
 assert(patched.includes('mode: "initial"'), "rr config should disable lazy manifest")
 
+const labsSrc = readFileSync(path.join(overviewDir, "src/labs.tsx"), "utf8")
+assert(labsSrc.includes('id: "cursor"'), "Cursor lab missing from the model picker")
+assert(labsSrc.includes('slug: "composer-2.5"'), "Composer 2.5 missing from Cursor")
+assert(labsSrc.includes('slug: "grok-4.5"'), "Grok 4.5 missing from xAI")
+assert(labsSrc.includes('slug: "gpt-5.6-terra"'), "GPT-5.6 Terra missing from OpenAI")
+assert(labsSrc.includes("GPT 5.6 Luna"), "GPT 5.6 Luna missing from OpenAI")
+assert(labsSrc.includes('id: "soul"'), "Soul missing from Anthropic")
+assert(!labsSrc.includes("gpt-5.6-soul"), "Soul should only live under Anthropic")
+assert(!labsSrc.includes("Muse Spark 2.0"), "Muse Spark 2.0 should be gone")
+assert(!labsSrc.includes("gemini-3.8-pro"), "Gemini 3.8 Pro should be gone")
+assert(labsSrc.indexOf("grok-4.5") < labsSrc.indexOf("composer-2.5"), "xAI should sit next to Cursor")
+
 const installer = readFileSync(path.join(overviewDir, "install-all.mjs"), "utf8")
 assert(
   installer.includes("falling back to npm install"),

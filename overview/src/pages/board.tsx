@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react"
 import { Link } from "react-router"
 import { benches, getBenchDisplayName, type Bench } from "../benches"
 import { boothSrc } from "../booth"
-import { getLabForSlug, ProviderLogo } from "../labs"
+import { getLabForSlug, groupBenchesByLab, ProviderLogo } from "../labs"
+import { ModelChrome } from "../model-chrome"
 
 function BenchCard({ bench, index }: { bench: Bench; index: number }) {
   const [url, setUrl] = useState<string | null>(null)
@@ -109,31 +110,18 @@ function BenchCard({ bench, index }: { bench: Bench; index: number }) {
           {lab ? <ProviderLogo labId={lab.id} size={15} /> : null}
           <h2 className="card-title">{displayName}</h2>
         </div>
-        <span className="card-link">
-          Open
-          <svg
-            className="arrow-icon"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <polyline points="12 5 19 12 12 19" />
-          </svg>
-        </span>
       </div>
     </Link>
   )
 }
 
 export function Component() {
+  const groups = groupBenchesByLab(benches)
+  let previewIndex = 0
+
   return (
     <main className="overview-page">
+      <ModelChrome />
       <header className="overview-header">
         <div className="header-badge">Benchmark</div>
         <h1>lyricsbench</h1>
@@ -142,11 +130,20 @@ export function Component() {
         </p>
       </header>
 
-      <section className="bench-grid" aria-label="Model previews">
-        {benches.map((bench, index) => (
-          <BenchCard key={bench.slug} bench={bench} index={index} />
-        ))}
-      </section>
+      {groups.map((group) => (
+        <section key={group.lab.id} className="lab-group" aria-label={group.lab.name}>
+          <div className="lab-group-header">
+            <ProviderLogo labId={group.lab.id} size={18} />
+            <h2 className="lab-group-name">{group.lab.name}</h2>
+          </div>
+          <div className="bench-grid">
+            {group.items.map((bench) => {
+              const index = previewIndex++
+              return <BenchCard key={bench.slug} bench={bench} index={index} />
+            })}
+          </div>
+        </section>
+      ))}
     </main>
   )
 }
