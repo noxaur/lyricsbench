@@ -58,7 +58,7 @@ button {
 }
 
 .overview-header {
-  margin-bottom: 3rem;
+  margin-bottom: 1.75rem;
 }
 
 .header-badge {
@@ -91,7 +91,7 @@ button {
 }
 
 .lab-group {
-  margin-bottom: 2.75rem;
+  margin-bottom: 1.35rem;
 }
 
 .lab-group:last-child {
@@ -101,8 +101,8 @@ button {
 .lab-group-header {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 1rem;
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
 }
 
 .lab-group-name {
@@ -116,7 +116,7 @@ button {
 .bench-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 1.75rem;
+  gap: 1rem;
 }
 
 .bench-card {
@@ -248,8 +248,7 @@ button {
 .card-meta {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 1.1rem 1.25rem;
+  padding: 0.85rem 1.1rem;
 }
 
 .card-meta-left {
@@ -269,27 +268,42 @@ button {
   text-overflow: ellipsis;
 }
 
-.card-link {
+.stage-chrome {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 50;
+}
+
+.chrome-pills {
   display: flex;
+  align-items: stretch;
+  height: 36px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-dropdown);
+  border-radius: 999px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.home-pill {
+  display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  transition: color 0.15s ease;
-  flex-shrink: 0;
+  justify-content: center;
+  width: 36px;
+  color: var(--text-primary);
+  border-right: 1px solid var(--border-subtle);
+  transition: background 0.15s ease;
 }
 
-.arrow-icon {
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+.home-pill:hover {
+  background: var(--bg-pill-hover);
 }
 
-.bench-card:hover .card-link {
-  color: #fff;
-}
-
-.bench-card:hover .arrow-icon {
-  transform: translateX(3px);
+.home-pill:focus-visible,
+.model-pill:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }
 
 /* =========================================
@@ -305,40 +319,29 @@ button {
   background: #000;
 }
 
-.stage-chrome {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 50;
-}
-
 .model-pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  height: 36px;
-  max-width: min(72vw, 280px);
-  padding: 0 0.7rem 0 0.5rem;
-  background: var(--bg-card);
+  gap: 0.4rem;
+  max-width: min(64vw, 260px);
+  padding: 0 0.7rem 0 0.6rem;
+  background: transparent;
   color: var(--text-primary);
-  border: 1px solid var(--border-dropdown);
-  border-radius: 999px;
+  border: 0;
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: background 0.15s ease;
+}
+
+.model-pill svg {
+  display: block;
+  flex-shrink: 0;
 }
 
 .model-pill:hover,
 .model-pill.open {
-  background: var(--bg-card-hover);
-  border-color: var(--border-hover);
-}
-
-.model-pill:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  background: var(--bg-pill-hover);
 }
 
 .model-pill-name {
@@ -404,18 +407,6 @@ button {
   color: #fff;
 }
 
-.dropdown-home {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  padding: 0.2rem 0.45rem;
-  border-radius: 6px;
-}
-
-.dropdown-home:hover {
-  color: #fff;
-  background: var(--bg-pill);
-}
 
 /* Labs and Models List */
 .dropdown-labs-list {

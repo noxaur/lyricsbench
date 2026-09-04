@@ -3,6 +3,7 @@ import { Link } from "react-router"
 import { benches, getBenchDisplayName, type Bench } from "../benches"
 import { boothSrc } from "../booth"
 import { getLabForSlug, groupBenchesByLab, ProviderLogo } from "../labs"
+import { ModelChrome } from "../model-chrome"
 
 function BenchCard({ bench, index }: { bench: Bench; index: number }) {
   const [url, setUrl] = useState<string | null>(null)
@@ -109,23 +110,6 @@ function BenchCard({ bench, index }: { bench: Bench; index: number }) {
           {lab ? <ProviderLogo labId={lab.id} size={15} /> : null}
           <h2 className="card-title">{displayName}</h2>
         </div>
-        <span className="card-link">
-          Open
-          <svg
-            className="arrow-icon"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <polyline points="12 5 19 12 12 19" />
-          </svg>
-        </span>
       </div>
     </Link>
   )
@@ -137,6 +121,7 @@ export function Component() {
 
   return (
     <main className="overview-page">
+      <ModelChrome />
       <header className="overview-header">
         <div className="header-badge">Benchmark</div>
         <h1>lyricsbench</h1>
