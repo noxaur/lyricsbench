@@ -10,4 +10,4 @@ pnpm ci
 pnpm dev
 ```
 
-Pushes to `main` run lint, a bench inventory check, a production build, and a smoke test against the built site. Vercel production updates only after those pass.
+`pnpm install` points git at `.githooks/`. Commits run lint + check; pushes run the full verify (lint, check, build, smoke). Vercel production updates from `main` after a push that passed those hooks.

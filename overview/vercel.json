@@ -4,8 +4,5 @@
   "buildCommand": "pnpm build",
   "outputDirectory": "dist",
   "installCommand": "pnpm ci",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
-  "git": {
-    "deploymentEnabled": false
-  }
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
