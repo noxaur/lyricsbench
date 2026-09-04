@@ -2,7 +2,7 @@
 
 A public board of karaoke-player implementations from frontier models.
 
-Live: https://lyricsbench.vercel.app
+Live: https://lyricsbench-psi.vercel.app
 
 ```bash
 cd overview
