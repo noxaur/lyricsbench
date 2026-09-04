@@ -61,5 +61,6 @@ try {
   console.error(err instanceof Error ? err.message : err)
   process.exitCode = 1
 } finally {
-  child.kill("SIGTERM")
+  child.kill("SIGKILL")
+  process.exit(process.exitCode ?? 0)
 }
