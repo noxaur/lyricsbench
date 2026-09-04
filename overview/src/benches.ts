@@ -11,6 +11,14 @@ export type Bench = {
 
 export const benches: Bench[] = [
   {
+    slug: "gpt-5.6-terra",
+    name: "gpt-5.6 terra",
+    folder: "gpt-5.6-terra",
+    router: "react-router 8 framework",
+    routes: ["/", "/play/:videoId", "/watch"],
+    command: "react-router",
+  },
+  {
     slug: "composer-2.5",
     name: "composer 2.5",
     folder: "composer-2.5",
@@ -99,6 +107,7 @@ export const benches: Bench[] = [
 ]
 
 const displayNames: Record<string, string> = {
+  "gpt-5.6-terra": "GPT-5.6 Terra",
   "composer-2.5": "Composer 2.5",
   "gemini-3.8-flash": "Gemini 3.8 Flash",
   "grok-4.5": "Grok 4.5",

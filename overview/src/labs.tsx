@@ -36,6 +36,7 @@ export const frontierLabs: FrontierLab[] = [
     name: "OpenAI",
     shortName: "OpenAI",
     models: [
+      { id: "gpt-5.6-terra", name: "GPT-5.6 Terra", slug: "gpt-5.6-terra", status: "live" },
       { id: "gpt-5", name: "GPT-5", status: "coming_soon" },
       { id: "o3", name: "o3", status: "coming_soon" },
     ],
