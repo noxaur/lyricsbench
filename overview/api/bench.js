@@ -1,12 +1,12 @@
 import { existsSync, readFileSync } from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
-import { createRequestHandler } from "react-router"
-import { publicBenchUrl } from "../overview/bench-adapt.mjs"
+import { createRequestHandler } from "react-router-8"
+import { publicBenchUrl } from "../bench-adapt.mjs"
 import { loadSsr } from "./ssr-map.js"
 
 const handlers = new Map()
-const distBenches = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../overview/dist/benches")
+const distBenches = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../dist/benches")
 
 function isSlug(value) {
   return /^[a-z0-9][a-z0-9.-]{0,63}$/i.test(value)

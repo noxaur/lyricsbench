@@ -24,5 +24,11 @@
   ],
   "git": {
     "deploymentEnabled": false
+  },
+  "functions": {
+    "api/bench.js": {
+      "includeFiles": "{api/**,bench-adapt.mjs,dist/benches/**/*.html}",
+      "maxDuration": 30
+    }
   }
 }

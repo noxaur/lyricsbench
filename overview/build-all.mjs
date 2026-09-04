@@ -9,7 +9,7 @@ const overviewDir = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.resolve(overviewDir, "..")
 const overlayPath = path.join(overviewDir, "vite-bench.mjs")
 const outBenchesDir = path.join(overviewDir, "dist", "benches")
-const ssrMapPath = path.join(rootDir, "api", "ssr-map.js")
+const ssrMapPath = path.join(overviewDir, "api", "ssr-map.js")
 
 function bin(dir, name) {
   const exe = path.join(dir, "node_modules", ".bin", name)
@@ -60,7 +60,7 @@ function writeSsrMap(ssrBenches) {
   mkdirSync(path.dirname(ssrMapPath), { recursive: true })
   const lines = ssrBenches.map(
     ({ slug, folder }) =>
-      `  ${JSON.stringify(slug)}: () => import(${JSON.stringify(`../${folder}/build/server/index.js`)}),`,
+      `  ${JSON.stringify(slug)}: () => import(${JSON.stringify(`../../${folder}/build/server/index.js`)}),`,
   )
   writeFileSync(
     ssrMapPath,
@@ -124,5 +124,5 @@ for (const { slug, folder, command } of benches) {
 }
 
 writeSsrMap(ssrBenches)
-console.log(`\n==> Wrote ${ssrBenches.length} SSR loader(s) to api/ssr-map.js`)
+console.log(`\n==> Wrote ${ssrBenches.length} SSR loader(s) to overview/api/ssr-map.js`)
 console.log("==> All benchmarks built into overview/dist/benches")

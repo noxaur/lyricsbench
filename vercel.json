@@ -22,12 +22,6 @@
       "destination": "/index.html"
     }
   ],
-  "functions": {
-    "api/bench.js": {
-      "includeFiles": "{api/**,overview/bench-adapt.mjs,overview/dist/benches/**/*.html,*/build/server/**}",
-      "maxDuration": 30
-    }
-  },
   "git": {
     "deploymentEnabled": false
   }
