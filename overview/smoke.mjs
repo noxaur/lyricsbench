@@ -5,15 +5,15 @@ import { fileURLToPath } from "node:url"
 
 const overview = path.dirname(fileURLToPath(import.meta.url))
 if (!existsSync(path.join(overview, "dist/index.html"))) {
-  console.error("dist/index.html missing — run npm run build first")
+  console.error("dist/index.html missing — run pnpm build first")
   process.exit(1)
 }
 
 const port = 4173
 const base = `http://127.0.0.1:${port}`
 const child = spawn(
-  "npx",
-  ["vite", "preview", "--host", "127.0.0.1", "--port", String(port), "--strictPort"],
+  "pnpm",
+  ["exec", "vite", "preview", "--host", "127.0.0.1", "--port", String(port), "--strictPort"],
   { cwd: overview, stdio: ["ignore", "pipe", "pipe"] },
 )
 

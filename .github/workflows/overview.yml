@@ -17,16 +17,19 @@ jobs:
         working-directory: overview
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: overview/package-lock.json
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run check
-      - run: npm run build
-      - run: npm run smoke
+          cache: pnpm
+          cache-dependency-path: overview/pnpm-lock.yaml
+      - run: pnpm ci
+      - run: pnpm lint
+      - run: pnpm check
+      - run: pnpm build
+      - run: pnpm smoke
       - name: Deploy production
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:

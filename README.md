@@ -6,8 +6,8 @@ Live: https://lyricsbench-psi.vercel.app
 
 ```bash
 cd overview
-npm ci
-npm run dev
+pnpm ci
+pnpm dev
 ```
 
 Pushes to `main` run lint, a bench inventory check, a production build, and a smoke test against the built site. Vercel production updates only after those pass.

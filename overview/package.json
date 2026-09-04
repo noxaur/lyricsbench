@@ -2,6 +2,7 @@
   "name": "lyricsbench-overview",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@11.25.0",
   "scripts": {
     "dev": "vite",
     "lint": "tsc --noEmit",
