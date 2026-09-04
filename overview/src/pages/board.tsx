@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { Link } from "react-router"
 import { benches, getBenchDisplayName, type Bench } from "../benches"
 import { boothSrc } from "../booth"
-import { getLabForSlug, ProviderLogo } from "../labs"
+import { getLabForSlug, groupBenchesByLab, ProviderLogo } from "../labs"
 
 function BenchCard({ bench, index }: { bench: Bench; index: number }) {
   const [url, setUrl] = useState<string | null>(null)
@@ -132,6 +132,9 @@ function BenchCard({ bench, index }: { bench: Bench; index: number }) {
 }
 
 export function Component() {
+  const groups = groupBenchesByLab(benches)
+  let previewIndex = 0
+
   return (
     <main className="overview-page">
       <header className="overview-header">
@@ -142,11 +145,20 @@ export function Component() {
         </p>
       </header>
 
-      <section className="bench-grid" aria-label="Model previews">
-        {benches.map((bench, index) => (
-          <BenchCard key={bench.slug} bench={bench} index={index} />
-        ))}
-      </section>
+      {groups.map((group) => (
+        <section key={group.lab.id} className="lab-group" aria-label={group.lab.name}>
+          <div className="lab-group-header">
+            <ProviderLogo labId={group.lab.id} size={18} />
+            <h2 className="lab-group-name">{group.lab.name}</h2>
+          </div>
+          <div className="bench-grid">
+            {group.items.map((bench) => {
+              const index = previewIndex++
+              return <BenchCard key={bench.slug} bench={bench} index={index} />
+            })}
+          </div>
+        </section>
+      ))}
     </main>
   )
 }

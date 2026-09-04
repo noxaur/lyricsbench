@@ -90,6 +90,28 @@ button {
   max-width: 500px;
 }
 
+.lab-group {
+  margin-bottom: 2.75rem;
+}
+
+.lab-group:last-child {
+  margin-bottom: 0;
+}
+
+.lab-group-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.lab-group-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
 /* Previews Grid */
 .bench-grid {
   display: grid;
@@ -283,174 +305,52 @@ button {
   background: #000;
 }
 
-.stage-header {
-  height: 54px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 1.25rem;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border-subtle);
-  flex-shrink: 0;
-  gap: 1rem;
+.stage-chrome {
+  position: fixed;
+  top: 16px;
+  right: 16px;
   z-index: 50;
-  position: relative;
 }
 
-.stage-left {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  min-width: 0;
-}
-
-.stage-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  padding: 0.35rem 0.6rem;
-  border-radius: var(--radius-sm);
-  transition: all 0.15s ease;
-  white-space: nowrap;
-}
-
-.stage-back:hover {
-  color: #fff;
-  background: var(--bg-pill);
-}
-
-.back-arrow {
-  font-size: 1rem;
-  line-height: 1;
-}
-
-.stage-sep {
-  color: rgba(255, 255, 255, 0.15);
-  font-size: 0.85rem;
-}
-
-.stage-current-badge {
+.model-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  min-width: 0;
+  height: 36px;
+  max-width: min(72vw, 280px);
+  padding: 0 0.7rem 0 0.5rem;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-dropdown);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.stage-current-name {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
+.model-pill:hover,
+.model-pill.open {
+  background: var(--bg-card-hover);
+  border-color: var(--border-hover);
+}
+
+.model-pill:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.model-pill-name {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-/* Quick Model Pills on Right Side (Max 5 viewed as currently) */
-.stage-right {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  flex-shrink: 0;
-}
-
-.model-picker {
-  display: flex;
-  align-items: center;
-  background: var(--bg-pill);
-  padding: 3px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-subtle);
-  gap: 2px;
-}
-
-.model-tab {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.7rem;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  border-radius: calc(var(--radius-md) - 3px);
-  white-space: nowrap;
-  transition: all 0.15s ease;
-}
-
-.model-tab:hover {
-  color: #fff;
-  background: var(--bg-pill-hover);
-}
-
-.model-tab.active {
-  background: var(--bg-pill-active);
-  color: var(--text-active);
-  font-weight: 600;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-}
-
-.model-tab.disabled {
-  color: var(--text-disabled);
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.model-tab.disabled:hover {
-  color: var(--text-disabled);
-  background: transparent;
-}
-
-.tab-badge {
-  font-size: 0.68rem;
-  padding: 1px 4px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-muted);
-}
-
-/* =========================================
-   FRONTIER LABS DROPDOWN SELECTOR
-   ========================================= */
-
-.dropdown-container {
-  position: relative;
-}
-
-.lab-dropdown-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.38rem 0.75rem;
-  background: var(--bg-pill);
-  color: var(--text-primary);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.lab-dropdown-trigger:hover,
-.lab-dropdown-trigger.open {
-  background: var(--bg-pill-hover);
-  border-color: var(--border-hover);
-  color: #fff;
-}
-
-.trigger-icon {
-  display: flex;
-  align-items: center;
-}
-
-.trigger-label {
   white-space: nowrap;
 }
 
 .chevron-icon {
   color: var(--text-muted);
+  flex-shrink: 0;
   transition: transform 0.2s ease;
 }
 
@@ -504,51 +404,17 @@ button {
   color: #fff;
 }
 
-.dropdown-count {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-}
-
-/* Filter Chips inside Dropdown */
-.dropdown-filter-chips {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.6rem 0.85rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.dropdown-filter-chips::-webkit-scrollbar {
-  display: none;
-}
-
-.filter-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.25rem 0.55rem;
-  font-size: 0.73rem;
+.dropdown-home {
+  font-size: 0.75rem;
   font-weight: 500;
   color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 999px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.12s ease;
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
 }
 
-.filter-chip:hover {
-  background: rgba(255, 255, 255, 0.08);
+.dropdown-home:hover {
   color: #fff;
-}
-
-.filter-chip.active {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.25);
-  color: #fff;
+  background: var(--bg-pill);
 }
 
 /* Labs and Models List */
@@ -562,10 +428,16 @@ button {
 
 .dropdown-lab-section {
   margin-bottom: 0.75rem;
+  padding: 0.2rem;
+  border-radius: var(--radius-md);
 }
 
 .dropdown-lab-section:last-child {
   margin-bottom: 0.25rem;
+}
+
+.dropdown-lab-section.current-lab {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .dropdown-lab-row {
@@ -599,6 +471,13 @@ button {
   background: transparent;
   border: 0;
   transition: all 0.12s ease;
+}
+
+.model-row-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
 }
 
 /* Live clickable model row */
@@ -657,24 +536,23 @@ button {
   white-space: nowrap;
 }
 
-/* Standalone external window button */
-.stage-external-btn {
+.dropdown-external {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0.15rem 0.65rem 0.65rem;
+  padding: 0.5rem 0.65rem;
   border-radius: var(--radius-sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.78rem;
+  font-weight: 500;
   color: var(--text-muted);
-  background: var(--bg-pill);
-  border: 1px solid var(--border-subtle);
-  transition: all 0.15s ease;
 }
 
-.stage-external-btn:hover {
+.dropdown-external:hover {
   color: #fff;
-  background: var(--bg-pill-hover);
-  border-color: var(--border-hover);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* Viewport Iframe */
@@ -732,17 +610,6 @@ button {
    RESPONSIVE DESIGN
    ========================================= */
 
-@media (max-width: 1024px) {
-  .model-picker {
-    overflow-x: auto;
-    max-width: 42vw;
-    scrollbar-width: none;
-  }
-  .model-picker::-webkit-scrollbar {
-    display: none;
-  }
-}
-
 @media (max-width: 768px) {
   .overview-page {
     padding: 2rem 1.25rem 4rem;
@@ -752,17 +619,14 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .model-picker {
-    display: none;
-  }
-
-  .stage-header {
-    padding: 0 0.85rem;
+  .stage-chrome {
+    top: 12px;
+    right: 12px;
   }
 
   .lab-dropdown-menu {
     position: fixed;
-    top: 58px;
+    top: 56px;
     right: 12px;
     left: 12px;
     width: auto;

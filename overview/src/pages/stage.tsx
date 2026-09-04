@@ -1,14 +1,8 @@
 import { useEffect, useRef, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router"
-import { benchBySlug, benches, getBenchDisplayName } from "../benches"
+import { benchBySlug, getBenchDisplayName } from "../benches"
 import { boothSrc } from "../booth"
-import {
-  frontierLabs,
-  getLabForSlug,
-  ProviderLogo,
-  type FrontierLab,
-  type LabModel,
-} from "../labs"
+import { frontierLabs, getLabForSlug, ProviderLogo } from "../labs"
 
 type Status =
   | { kind: "cueing" }
@@ -20,25 +14,22 @@ export function Component() {
   const navigate = useNavigate()
   const bench = benchBySlug(slug)
   const [status, setStatus] = useState<Status>({ kind: "cueing" })
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [labFilter, setLabFilter] = useState<string>("all")
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  const [isOpen, setIsOpen] = useState(false)
+  const pillRef = useRef<HTMLDivElement>(null)
 
   const currentLab = bench ? getLabForSlug(bench.slug) : undefined
+  const currentDisplayName = bench ? getBenchDisplayName(bench) : "Select a model"
 
-  // Close dropdown on click outside or escape key
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setIsDropdownOpen(false)
+      if (pillRef.current && !pillRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
       }
     }
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        setIsDropdownOpen(false)
-      }
+      if (e.key === "Escape") setIsOpen(false)
     }
-    if (isDropdownOpen) {
+    if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside)
       document.addEventListener("keydown", handleKeyDown)
     }
@@ -46,7 +37,7 @@ export function Component() {
       document.removeEventListener("mousedown", handleClickOutside)
       document.removeEventListener("keydown", handleKeyDown)
     }
-  }, [isDropdownOpen])
+  }, [isOpen])
 
   useEffect(() => {
     if (!bench) return
@@ -77,262 +68,162 @@ export function Component() {
     return () => ac.abort()
   }, [bench])
 
-  if (!bench) {
-    return (
-      <main className="stage">
-        <header className="stage-header">
-          <div className="stage-left">
-            <Link className="stage-back" to="/">
-              <span className="back-arrow">←</span> Overview
-            </Link>
-          </div>
-        </header>
-        <div className="stage-fault">
-          <h1>Model not found</h1>
-          <p>Please return to the overview to select an available model.</p>
-        </div>
-      </main>
-    )
-  }
-
-  const currentDisplayName = getBenchDisplayName(bench)
-
-  // Keep max 5 models viewed in the quick bar as currently
-  // If labFilter is "all", show the 5 live models. If a lab is selected, show that lab's models (max 5).
-  const visibleModels: { model: LabModel; lab: FrontierLab }[] = (() => {
-    if (labFilter !== "all") {
-      const lab = frontierLabs.find((l) => l.id === labFilter)
-      if (lab) {
-        return lab.models.slice(0, 5).map((m) => ({ model: m, lab }))
-      }
-    }
-    // Default: live benchmarked models (capped at 5)
-    const list: { model: LabModel; lab: FrontierLab }[] = []
-    for (const b of benches.slice(0, 5)) {
-      const l = getLabForSlug(b.slug)
-      if (l) {
-        const m = l.models.find((item) => item.slug === b.slug)
-        if (m) {
-          list.push({ model: m, lab: l })
-        }
-      }
-    }
-    return list
-  })()
-
-  // Filtered labs for the dropdown list
-  const displayLabs = labFilter === "all"
-    ? frontierLabs
-    : frontierLabs.filter((l) => l.id === labFilter)
-
   const handleSelectModel = (targetSlug?: string) => {
     if (!targetSlug) return
-    setIsDropdownOpen(false)
+    setIsOpen(false)
     navigate(`/b/${targetSlug}`)
   }
 
+  const orderedLabs = currentLab
+    ? [currentLab, ...frontierLabs.filter((lab) => lab.id !== currentLab.id)]
+    : frontierLabs
+
   return (
     <main className="stage">
-      <header className="stage-header">
-        <div className="stage-left">
-          <Link className="stage-back" to="/" title="Return to overview">
-            <span className="back-arrow">←</span>
-            <span className="back-text">Overview</span>
-          </Link>
-          <span className="stage-sep">/</span>
-          <div className="stage-current-badge">
-            {currentLab ? (
-              <ProviderLogo labId={currentLab.id} size={15} />
-            ) : null}
-            <span className="stage-current-name">{currentDisplayName}</span>
-          </div>
-        </div>
+      <div className="stage-chrome" ref={pillRef}>
+        <button
+          type="button"
+          className={`model-pill ${isOpen ? "open" : ""}`}
+          onClick={() => setIsOpen((prev) => !prev)}
+          aria-expanded={isOpen}
+          aria-haspopup="true"
+          title="Change model"
+        >
+          {currentLab ? <ProviderLogo labId={currentLab.id} size={15} /> : null}
+          <span className="model-pill-name">{currentDisplayName}</span>
+          <svg
+            className={`chevron-icon ${isOpen ? "rotate" : ""}`}
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
 
-        <div className="stage-right">
-          {/* Quick Model Pills (max 5 visible) */}
-          <nav className="model-picker" aria-label="Quick model switcher">
-            {visibleModels.map(({ model, lab }) => {
-              const isLive = model.status === "live" && model.slug
-              const isActive = model.slug === bench.slug
+        {isOpen ? (
+          <div className="lab-dropdown-menu" role="menu">
+            <div className="dropdown-header">
+              <span className="dropdown-title">Models</span>
+              <Link className="dropdown-home" to="/" onClick={() => setIsOpen(false)}>
+                Overview
+              </Link>
+            </div>
 
-              if (!isLive) {
+            <div className="dropdown-labs-list">
+              {orderedLabs.map((lab) => {
+                const isCurrentLab = lab.id === currentLab?.id
                 return (
-                  <span
-                    key={model.id}
-                    className="model-tab disabled"
-                    title={`${model.name} — Coming soon`}
+                  <div
+                    key={lab.id}
+                    className={`dropdown-lab-section ${isCurrentLab ? "current-lab" : ""}`}
                   >
-                    <ProviderLogo labId={lab.id} size={13} />
-                    <span className="tab-name">{model.name}</span>
-                    <span className="tab-badge">Soon</span>
-                  </span>
-                )
-              }
-
-              return (
-                <Link
-                  key={model.id}
-                  to={`/b/${model.slug}`}
-                  className={`model-tab ${isActive ? "active" : ""}`}
-                  aria-current={isActive ? "page" : undefined}
-                >
-                  <ProviderLogo labId={lab.id} size={13} />
-                  <span className="tab-name">{model.name}</span>
-                </Link>
-              )
-            })}
-          </nav>
-
-          {/* Frontier Labs Dropdown Selector */}
-          <div className="dropdown-container" ref={dropdownRef}>
-            <button
-              type="button"
-              className={`lab-dropdown-trigger ${isDropdownOpen ? "open" : ""}`}
-              onClick={() => setIsDropdownOpen((prev) => !prev)}
-              aria-expanded={isDropdownOpen}
-              aria-haspopup="true"
-              title="Select frontier labs & models"
-            >
-              <span className="trigger-icon">
-                {currentLab ? (
-                  <ProviderLogo labId={currentLab.id} size={14} />
-                ) : (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                    <circle cx="12" cy="12" r="10" />
-                  </svg>
-                )}
-              </span>
-              <span className="trigger-label">
-                {labFilter === "all" ? "Frontier Labs" : (frontierLabs.find(l => l.id === labFilter)?.shortName || "Labs")}
-              </span>
-              <svg
-                className={`chevron-icon ${isDropdownOpen ? "rotate" : ""}`}
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </button>
-
-            {isDropdownOpen && (
-              <div className="lab-dropdown-menu" role="menu">
-                <div className="dropdown-header">
-                  <span className="dropdown-title">Frontier Labs</span>
-                  <span className="dropdown-count">{frontierLabs.length} providers</span>
-                </div>
-
-                {/* Lab Filter Chips */}
-                <div className="dropdown-filter-chips">
-                  <button
-                    type="button"
-                    className={`filter-chip ${labFilter === "all" ? "active" : ""}`}
-                    onClick={() => setLabFilter("all")}
-                  >
-                    All
-                  </button>
-                  {frontierLabs.map((lab) => (
-                    <button
-                      key={lab.id}
-                      type="button"
-                      className={`filter-chip ${labFilter === lab.id ? "active" : ""}`}
-                      onClick={() => setLabFilter(lab.id)}
-                    >
-                      <ProviderLogo labId={lab.id} size={11} />
-                      <span>{lab.shortName}</span>
-                    </button>
-                  ))}
-                </div>
-
-                {/* Labs & Models List */}
-                <div className="dropdown-labs-list">
-                  {displayLabs.map((lab) => (
-                    <div key={lab.id} className="dropdown-lab-section">
-                      <div className="dropdown-lab-row">
-                        <ProviderLogo labId={lab.id} size={14} />
-                        <span className="dropdown-lab-name">{lab.name}</span>
-                      </div>
-
-                      <div className="dropdown-models-sublist">
-                        {lab.models.map((model) => {
-                          const isLive = model.status === "live" && model.slug
-                          const isCurrent = model.slug === bench.slug
-
-                          if (!isLive) {
-                            return (
-                              <div
-                                key={model.id}
-                                className="dropdown-model-row coming-soon"
-                                title="Coming soon"
-                              >
-                                <span className="model-name-text">{model.name}</span>
-                                <span className="coming-soon-pill">coming soon</span>
-                              </div>
-                            )
-                          }
-
-                          return (
-                            <button
-                              key={model.id}
-                              type="button"
-                              className={`dropdown-model-row live ${isCurrent ? "current" : ""}`}
-                              onClick={() => handleSelectModel(model.slug)}
-                            >
-                              <span className="model-name-text">{model.name}</span>
-                              {isCurrent ? (
-                                <span className="current-indicator">
-                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="20 6 9 17 4 12" />
-                                  </svg>
-                                </span>
-                              ) : (
-                                <span className="live-pill">Live</span>
-                              )}
-                            </button>
-                          )
-                        })}
-                      </div>
+                    <div className="dropdown-lab-row">
+                      <ProviderLogo labId={lab.id} size={14} />
+                      <span className="dropdown-lab-name">{lab.name}</span>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
 
-          {/* External Window Shortcut */}
-          {status.kind === "live" ? (
-            <a
-              href={status.url}
-              target="_blank"
-              rel="noreferrer"
-              className="stage-external-btn"
-              title="Open standalone page in new window"
-            >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                    <div className="dropdown-models-sublist">
+                      {lab.models.map((model) => {
+                        const isLive = model.status === "live" && model.slug
+                        const isCurrent = model.slug === bench?.slug
+
+                        if (!isLive) {
+                          return (
+                            <div
+                              key={model.id}
+                              className="dropdown-model-row coming-soon"
+                              title="Coming soon"
+                            >
+                              <span className="model-row-left">
+                                <ProviderLogo labId={lab.id} size={13} />
+                                <span className="model-name-text">{model.name}</span>
+                              </span>
+                              <span className="coming-soon-pill">soon</span>
+                            </div>
+                          )
+                        }
+
+                        return (
+                          <button
+                            key={model.id}
+                            type="button"
+                            className={`dropdown-model-row live ${isCurrent ? "current" : ""}`}
+                            onClick={() => handleSelectModel(model.slug)}
+                          >
+                            <span className="model-row-left">
+                              <ProviderLogo labId={lab.id} size={13} />
+                              <span className="model-name-text">{model.name}</span>
+                            </span>
+                            {isCurrent ? (
+                              <span className="current-indicator">
+                                <svg
+                                  width="12"
+                                  height="12"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="3"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                              </span>
+                            ) : (
+                              <span className="live-pill">Live</span>
+                            )}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            {status.kind === "live" ? (
+              <a
+                href={status.url}
+                target="_blank"
+                rel="noreferrer"
+                className="dropdown-external"
               >
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                <polyline points="15 3 21 3 21 9" />
-                <line x1="10" y1="14" x2="21" y2="3" />
-              </svg>
-            </a>
-          ) : null}
-        </div>
-      </header>
+                Open standalone
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <polyline points="15 3 21 3 21 9" />
+                  <line x1="10" y1="14" x2="21" y2="3" />
+                </svg>
+              </a>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
 
-      {status.kind === "cueing" ? (
+      {!bench ? (
+        <div className="stage-fault">
+          <h1>Model not found</h1>
+          <p>Open the pill to pick an available model, or return to the overview.</p>
+        </div>
+      ) : null}
+
+      {bench && status.kind === "cueing" ? (
         <div className="stage-cue">
           <div className="stage-spinner" />
           <h1>Starting {currentDisplayName}</h1>
@@ -340,14 +231,14 @@ export function Component() {
         </div>
       ) : null}
 
-      {status.kind === "fault" ? (
+      {bench && status.kind === "fault" ? (
         <div className="stage-fault">
           <h1>Could not load {currentDisplayName}</h1>
           <p>{status.message}</p>
         </div>
       ) : null}
 
-      {status.kind === "live" ? (
+      {bench && status.kind === "live" ? (
         <iframe
           className="stage-viewport"
           title={currentDisplayName}

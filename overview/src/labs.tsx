@@ -14,6 +14,25 @@ export type FrontierLab = {
 
 export const frontierLabs: FrontierLab[] = [
   {
+    id: "xai",
+    name: "xAI",
+    shortName: "xAI",
+    models: [
+      { id: "grok-4.5", name: "Grok 4.5", slug: "grok-4.5", status: "live" },
+      { id: "grok-4.6", name: "Grok 4.6", slug: "grok-4.6", status: "live" },
+      { id: "grok-5", name: "Grok 5", status: "coming_soon" },
+    ],
+  },
+  {
+    id: "cursor",
+    name: "Cursor",
+    shortName: "Cursor",
+    models: [
+      { id: "composer-2.5", name: "Composer 2.5", slug: "composer-2.5", status: "live" },
+      { id: "composer-2.5-fast", name: "Composer 2.5 Fast", status: "coming_soon" },
+    ],
+  },
+  {
     id: "google",
     name: "Google DeepMind",
     shortName: "Google",
@@ -23,12 +42,13 @@ export const frontierLabs: FrontierLab[] = [
     ],
   },
   {
-    id: "xai",
-    name: "xAI",
-    shortName: "xAI",
+    id: "anthropic",
+    name: "Anthropic",
+    shortName: "Anthropic",
     models: [
-      { id: "grok-4.6", name: "Grok 4.6", slug: "grok-4.6", status: "live" },
-      { id: "grok-5", name: "Grok 5", status: "coming_soon" },
+      { id: "fable-5", name: "Fable 5", status: "coming_soon" },
+      { id: "sonnet", name: "Sonnet", status: "coming_soon" },
+      { id: "opus", name: "Opus", status: "coming_soon" },
     ],
   },
   {
@@ -38,15 +58,6 @@ export const frontierLabs: FrontierLab[] = [
     models: [
       { id: "gpt-5", name: "GPT-5", status: "coming_soon" },
       { id: "o3", name: "o3", status: "coming_soon" },
-    ],
-  },
-  {
-    id: "anthropic",
-    name: "Anthropic",
-    shortName: "Anthropic",
-    models: [
-      { id: "claude-3.7-sonnet", name: "Claude 3.7 Sonnet", status: "coming_soon" },
-      { id: "claude-4-opus", name: "Claude 4 Opus", status: "coming_soon" },
     ],
   },
   {
@@ -76,6 +87,36 @@ export function getLabForSlug(slug: string): FrontierLab | undefined {
 
 export function getLabById(id: string): FrontierLab | undefined {
   return frontierLabs.find((lab) => lab.id === id)
+}
+
+export function groupBenchesByLab<T extends { slug: string }>(
+  items: T[],
+): { lab: FrontierLab; items: T[] }[] {
+  const bySlug = new Map(items.map((item) => [item.slug, item]))
+  const groups: { lab: FrontierLab; items: T[] }[] = []
+  const used = new Set<string>()
+
+  for (const lab of frontierLabs) {
+    const labItems: T[] = []
+    for (const model of lab.models) {
+      if (!model.slug) continue
+      const item = bySlug.get(model.slug)
+      if (item) {
+        labItems.push(item)
+        used.add(item.slug)
+      }
+    }
+    if (labItems.length) groups.push({ lab, items: labItems })
+  }
+
+  const leftovers = items.filter((item) => !used.has(item.slug))
+  if (leftovers.length) {
+    groups.push({
+      lab: { id: "other", name: "Other", shortName: "Other", models: [] },
+      items: leftovers,
+    })
+  }
+  return groups
 }
 
 export function ProviderLogo({
@@ -127,6 +168,19 @@ export function ProviderLogo({
           aria-hidden="true"
         >
           <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+        </svg>
+      )
+    case "cursor":
+      return (
+        <svg
+          className={className}
+          width={size}
+          height={size}
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M11.925 24l3.153-5.443h-6.276zm7.254-9.72-3.148 5.436 3.148 5.437L24 14.28zM0 14.28l3.153 5.437 3.148-5.436zm12.038-5.253-3.148 5.436h6.276zm0-9.72L8.89 9.744h6.276zM4.592 4.307 1.444 9.744l3.148 5.436L7.74 9.744zm14.816 0-3.148 5.437 3.148 5.436 3.148-5.436z" />
         </svg>
       )
     case "openai":
