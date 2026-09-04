@@ -1,0 +1,151 @@
+@import "tailwindcss";
+@import "@fontsource-variable/outfit";
+@import "@fontsource-variable/fraunces";
+
+@theme inline {
+  --font-sans: "Outfit Variable", "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-lyric: "Fraunces Variable", "Fraunces", ui-serif, Georgia, serif;
+  --color-canvas: var(--canvas);
+  --color-ink: var(--ink);
+  --color-dim: var(--dim);
+  --color-spot: var(--spot);
+  --color-sung: var(--sung);
+  --color-unsung: var(--unsung);
+  --color-panel: var(--panel);
+  --color-line: var(--line);
+  --color-stage: var(--stage);
+  --color-spot-ink: var(--spot-ink);
+  --radius-box: 10px;
+}
+
+:root,
+[data-theme="ember"] {
+  color-scheme: dark;
+  --canvas: #12100e;
+  --ink: #f4eee6;
+  --dim: #8a8178;
+  --spot: #e8a35c;
+  --spot-ink: #1a1208;
+  --sung: #fff1df;
+  --unsung: #6a635c;
+  --panel: #1a1714;
+  --line: #2c2823;
+  --stage: #0e0c0a;
+}
+
+[data-theme="night"] {
+  color-scheme: dark;
+  --canvas: #0c1018;
+  --ink: #e8eef6;
+  --dim: #7a8698;
+  --spot: #7eb6e8;
+  --spot-ink: #081018;
+  --sung: #f0f6fc;
+  --unsung: #5a6678;
+  --panel: #121820;
+  --line: #222a36;
+  --stage: #080c12;
+}
+
+[data-theme="moss"] {
+  color-scheme: dark;
+  --canvas: #0e1410;
+  --ink: #e8f0e8;
+  --dim: #7a8a7c;
+  --spot: #8fbf6a;
+  --spot-ink: #0c1408;
+  --sung: #f0f8ec;
+  --unsung: #5a6a5c;
+  --panel: #141a16;
+  --line: #242c26;
+  --stage: #0a100c;
+}
+
+[data-theme="day"] {
+  color-scheme: light;
+  --canvas: #ece8e2;
+  --ink: #1c1814;
+  --dim: #6a645c;
+  --spot: #c45c28;
+  --spot-ink: #fff8f2;
+  --sung: #141210;
+  --unsung: #8a847c;
+  --panel: #f6f2ec;
+  --line: #d4cec4;
+  --stage: #e4e0d8;
+}
+
+html,
+body,
+#root {
+  min-height: 100dvh;
+  background: var(--canvas);
+  color: var(--ink);
+}
+
+body {
+  font-family: var(--font-sans);
+  margin: 0;
+}
+
+/* Stage atmosphere: soft radial wash, not a flat fill. */
+.stage-wash {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 35%, color-mix(in srgb, var(--spot) 8%, transparent), transparent 70%),
+    var(--stage);
+}
+
+.lyric-wipe {
+  background-image: linear-gradient(
+    90deg,
+    var(--sung) 0%,
+    var(--sung) var(--wipe, 0%),
+    var(--unsung) var(--wipe, 0%)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.lyric-snap {
+  color: var(--sung);
+}
+
+.lyric-hold {
+  color: color-mix(in srgb, var(--sung) 85%, var(--unsung));
+}
+
+.lyric-gap {
+  color: var(--unsung);
+  opacity: 0.7;
+}
+
+.lyric-reel {
+  will-change: transform;
+  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lyric-reel {
+    transition: none;
+  }
+  .lyric-wipe {
+    background-image: none;
+    color: var(--sung);
+  }
+}
+
+.glass {
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--panel) !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--spot);
+  outline-offset: 2px;
+}
