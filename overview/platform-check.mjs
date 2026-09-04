@@ -1,8 +1,9 @@
-import { readFileSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { adaptSource, patchReactRouterConfig, publicBenchUrl } from "./bench-adapt.mjs"
 import { loadBenches } from "./bench-catalog.mjs"
+import { liveSlug } from "./src/lab-live.mjs"
 
 const overviewDir = path.dirname(fileURLToPath(import.meta.url))
 
@@ -61,12 +62,26 @@ assert(labsSrc.includes('id: "cursor"'), "Cursor lab missing from the model pick
 assert(labsSrc.includes('slug: "composer-2.5"'), "Composer 2.5 missing from Cursor")
 assert(labsSrc.includes('slug: "grok-4.5"'), "Grok 4.5 missing from xAI")
 assert(labsSrc.includes('slug: "gpt-5.6-terra"'), "GPT-5.6 Terra missing from OpenAI")
-assert(labsSrc.includes("GPT 5.6 Luna"), "GPT 5.6 Luna missing from OpenAI")
+assert(labsSrc.includes('slug: "gpt-5.6-luna"'), "GPT-5.6 Luna missing from OpenAI")
+assert(labsSrc.includes("Luna"), "GPT-5.6 Luna missing from OpenAI")
 assert(labsSrc.includes('id: "soul"'), "Soul missing from Anthropic")
 assert(!labsSrc.includes("gpt-5.6-soul"), "Soul should only live under Anthropic")
 assert(!labsSrc.includes("Muse Spark 2.0"), "Muse Spark 2.0 should be gone")
 assert(!labsSrc.includes("gemini-3.8-pro"), "Gemini 3.8 Pro should be gone")
 assert(labsSrc.indexOf("grok-4.5") < labsSrc.indexOf("composer-2.5"), "xAI should sit next to Cursor")
+
+const workspace = path.resolve(overviewDir, "..")
+assert(liveSlug({ id: "gpt-5.6-terra", slug: "gpt-5.6-terra" }, benches) === "gpt-5.6-terra", "Terra should be live")
+assert(liveSlug({ id: "grok-4.6" }, benches) === "grok-4.6", "a bench id should count as live without a labs slug")
+assert(
+  Boolean(liveSlug({ id: "gpt-5.6-luna", slug: "gpt-5.6-luna" }, benches)) ===
+    existsSync(path.join(workspace, "gpt-5.6-luna", "package.json")),
+  "GPT-5.6 Luna should be live iff its booth folder exists",
+)
+
+const chrome = readFileSync(path.join(overviewDir, "src/model-chrome.tsx"), "utf8")
+assert(chrome.includes("liveSlugFor"), "picker must derive live from registered benches")
+assert(!chrome.includes('status === "live"'), "picker should not trust labs status alone")
 
 const installer = readFileSync(path.join(overviewDir, "install-all.mjs"), "utf8")
 assert(

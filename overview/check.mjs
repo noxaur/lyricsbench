@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs"
+import { existsSync, readdirSync, readFileSync } from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { loadBenches } from "./bench-catalog.mjs"
@@ -20,6 +20,14 @@ for (const { folder } of benches) {
   const deps = pkg.dependencies ?? {}
   if (!("react-router" in deps) && !("react-router-dom" in deps)) {
     failures.push(`${folder}: no react-router dependency`)
+  }
+}
+
+for (const entry of readdirSync(workspace, { withFileTypes: true })) {
+  if (!entry.isDirectory() || entry.name.startsWith(".") || entry.name === "overview") continue
+  if (!existsSync(path.join(workspace, entry.name, "package.json"))) continue
+  if (!benches.some((bench) => bench.folder === entry.name)) {
+    failures.push(`${entry.name}: booth folder is not registered in src/benches.ts`)
   }
 }
 
