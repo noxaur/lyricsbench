@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url"
 import { adaptSource, patchReactRouterConfig, publicBenchUrl } from "./bench-adapt.mjs"
 import { loadBenches } from "./bench-catalog.mjs"
 import {
+  mapPool,
   restoreBenchArtifacts,
   saveBenchArtifacts,
   shouldSkipInstall,
@@ -139,6 +140,9 @@ try {
   assert(readFileSync(path.join(clientDest, "index.html"), "utf8") === "hello", "restored client")
   assert(readFileSync(path.join(serverDest, "index.js"), "utf8") === "export default {}", "restored server")
   assert(!restoreBenchArtifacts(cacheRoot, "demo", "zzz", { clientDir: clientDest, serverDir: serverDest }), "wrong hash should miss")
+
+  const pooled = await mapPool([1, 2, 3], 2, async (n) => n * 2)
+  assert(JSON.stringify(pooled) === "[2,4,6]", "mapPool should preserve order")
 } finally {
   if (vercelWas === undefined) delete process.env.VERCEL
   else process.env.VERCEL = vercelWas

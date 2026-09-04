@@ -24,18 +24,18 @@ async function installDir(dir, label) {
   }
   if (existsSync(path.join(dir, "package-lock.json"))) {
     const hasMods = existsSync(path.join(dir, "node_modules"))
-    try {
-      if (hasMods) {
-        // Reuse Vercel's restored node_modules instead of `npm ci`, which deletes it.
-        await runCommand("npm", ["install", "--prefer-offline", "--no-audit", "--no-fund"], dir, env)
-      } else {
-        await runCommand("npm", ["ci", "--prefer-offline", "--no-audit", "--no-fund"], dir, env)
-      }
-    } catch {
-      // ponytail: several booth lockfiles are stale vs package.json, so npm ci
-      // dies on Vercel. Upgrade: regenerate each package-lock.json.
-      console.warn(`[${label}] npm ci failed; falling back to npm install`)
+    if (hasMods) {
+      // Reuse Vercel's restored node_modules instead of `npm ci`, which deletes it.
       await runCommand("npm", ["install", "--prefer-offline", "--no-audit", "--no-fund"], dir, env)
+    } else {
+      try {
+        await runCommand("npm", ["ci", "--prefer-offline", "--no-audit", "--no-fund"], dir, env)
+      } catch {
+        // ponytail: several booth lockfiles are stale vs package.json, so npm ci
+        // dies on Vercel. Upgrade: regenerate each package-lock.json.
+        console.warn(`[${label}] npm ci failed; falling back to npm install`)
+        await runCommand("npm", ["install", "--prefer-offline", "--no-audit", "--no-fund"], dir, env)
+      }
     }
     writeStamp(dir)
     return
