@@ -45,6 +45,7 @@ export const frontierLabs: FrontierLab[] = [
     name: "Anthropic",
     shortName: "Anthropic",
     models: [
+      { id: "soul", name: "Soul", status: "coming_soon" },
       { id: "opus", name: "Opus", status: "coming_soon" },
     ],
   },
@@ -53,8 +54,8 @@ export const frontierLabs: FrontierLab[] = [
     name: "OpenAI",
     shortName: "OpenAI",
     models: [
+      { id: "gpt-5.6-terra", name: "GPT-5.6 Terra", slug: "gpt-5.6-terra", status: "live" },
       { id: "gpt-5.6-luna", name: "GPT 5.6 Luna", status: "coming_soon" },
-      { id: "gpt-5.6-soul", name: "GPT 5.6 Soul", status: "coming_soon" },
     ],
   },
   {
