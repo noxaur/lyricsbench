@@ -10,4 +10,4 @@ pnpm ci
 pnpm dev
 ```
 
-`pnpm install` points git at `.githooks/`. Commits run lint + check. Pushes run `pnpm ci` + verify locally, and a push of `main` deploys production from this machine.
+`pnpm install` points git at `.githooks/`. Commits run lint + check. Pushes run `pnpm ci` + verify locally. GitHub only kicks production on Vercel — no install, lint, or build on the runner.
