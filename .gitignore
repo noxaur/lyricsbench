@@ -14,6 +14,7 @@ build/
 *.log
 coverage/
 .vite/
+vite.config.lyricsbench.mjs
 
 # nested clone with its own history
 umbra-lyrics-source/

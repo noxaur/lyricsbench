@@ -1,9 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "vite",
-  "buildCommand": "node build-all.mjs",
-  "outputDirectory": "dist",
-  "installCommand": "node install-all.mjs",
+  "framework": null,
+  "buildCommand": "node overview/build-all.mjs",
+  "outputDirectory": "overview/dist",
+  "installCommand": "node overview/install-all.mjs",
   "rewrites": [
     {
       "source": "/benches/:slug/api/:path*",
@@ -22,6 +22,12 @@
       "destination": "/index.html"
     }
   ],
+  "functions": {
+    "api/bench.js": {
+      "includeFiles": "{api/**,overview/bench-adapt.mjs,overview/dist/benches/**/*.html,*/build/server/**}",
+      "maxDuration": 30
+    }
+  },
   "git": {
     "deploymentEnabled": false
   }

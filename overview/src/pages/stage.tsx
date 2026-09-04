@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router"
 import { benchBySlug, benches, getBenchDisplayName } from "../benches"
+import { boothSrc } from "../booth"
 import {
   frontierLabs,
   getLabForSlug,
@@ -49,6 +50,11 @@ export function Component() {
 
   useEffect(() => {
     if (!bench) return
+    if (import.meta.env.PROD) {
+      setStatus({ kind: "live", url: boothSrc(bench.slug) })
+      return
+    }
+
     const ac = new AbortController()
     setStatus({ kind: "cueing" })
 
@@ -330,7 +336,7 @@ export function Component() {
         <div className="stage-cue">
           <div className="stage-spinner" />
           <h1>Starting {currentDisplayName}</h1>
-          <p>Booting the dev server...</p>
+          <p>{import.meta.env.PROD ? "Loading the booth..." : "Booting the dev server..."}</p>
         </div>
       ) : null}
 

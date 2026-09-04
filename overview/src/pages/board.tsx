@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { Link } from "react-router"
 import { benches, getBenchDisplayName, type Bench } from "../benches"
+import { boothSrc } from "../booth"
 import { getLabForSlug, ProviderLogo } from "../labs"
 
 function BenchCard({ bench, index }: { bench: Bench; index: number }) {
@@ -28,6 +29,11 @@ function BenchCard({ bench, index }: { bench: Bench; index: number }) {
   }, [])
 
   useEffect(() => {
+    if (import.meta.env.PROD) {
+      setUrl(boothSrc(bench.slug))
+      return
+    }
+
     const ac = new AbortController()
     const timer = setTimeout(() => {
       fetch(`/__bench/${encodeURIComponent(bench.slug)}`, { signal: ac.signal })

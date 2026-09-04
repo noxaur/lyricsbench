@@ -1,11 +1,35 @@
 import { spawn } from "node:child_process"
-import { existsSync } from "node:fs"
+import { existsSync, readdirSync, readFileSync } from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
 const overview = path.dirname(fileURLToPath(import.meta.url))
-if (!existsSync(path.join(overview, "dist/index.html"))) {
+const dist = path.join(overview, "dist")
+if (!existsSync(path.join(dist, "index.html"))) {
   console.error("dist/index.html missing — run pnpm build first")
+  process.exit(1)
+}
+
+function walk(dir) {
+  const out = []
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name)
+    if (entry.isDirectory()) out.push(...walk(full))
+    else out.push(full)
+  }
+  return out
+}
+
+const js = walk(path.join(dist, "assets"))
+  .filter((f) => f.endsWith(".js"))
+  .map((f) => readFileSync(f, "utf8"))
+  .join("\n")
+if (js.includes("/__bench/")) {
+  console.error("production bundle still fetches /__bench/")
+  process.exit(1)
+}
+if (!js.includes("/benches/")) {
+  console.error("production bundle missing /benches/ booth URLs")
   process.exit(1)
 }
 

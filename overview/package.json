@@ -8,7 +8,8 @@
     "lint": "tsc --noEmit",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "check": "node check.mjs",
+    "check": "node check.mjs && node platform-check.mjs",
+    "build:all": "node build-all.mjs",
     "smoke": "node smoke.mjs",
     "verify": "pnpm lint && pnpm check && pnpm build && pnpm smoke",
     "prepare": "git rev-parse --is-inside-work-tree >/dev/null 2>&1 && git config core.hooksPath .githooks || true"

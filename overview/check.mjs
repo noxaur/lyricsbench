@@ -1,16 +1,16 @@
 import { existsSync, readFileSync } from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
+import { loadBenches } from "./bench-catalog.mjs"
 
 const overview = path.dirname(fileURLToPath(import.meta.url))
 const workspace = path.resolve(overview, "..")
-const src = readFileSync(path.join(overview, "src/benches.ts"), "utf8")
-const folders = [...src.matchAll(/folder: "([^"]+)"/g)].map((m) => m[1])
+const benches = loadBenches()
 const failures = []
 
-if (folders.length === 0) failures.push("no folders listed in src/benches.ts")
+if (benches.length === 0) failures.push("no benches listed in src/benches.ts")
 
-for (const folder of folders) {
+for (const { folder } of benches) {
   const pkgPath = path.join(workspace, folder, "package.json")
   if (!existsSync(pkgPath)) {
     failures.push(`${folder}: missing package.json`)
@@ -28,4 +28,4 @@ if (failures.length) {
   process.exit(1)
 }
 
-console.log(`ok ${folders.length} react-router benches`)
+console.log(`ok ${benches.length} react-router benches`)
