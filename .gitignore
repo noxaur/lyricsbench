@@ -1,0 +1,19 @@
+node_modules/
+dist/
+build/
+.vercel/
+.react-router/
+.wrangler/
+.fly/
+.worktrees/
+.env
+.env.*
+!.env.example
+*.local
+.DS_Store
+*.log
+coverage/
+.vite/
+
+# nested clone with its own history
+umbra-lyrics-source/
