@@ -11,6 +11,21 @@ export type Bench = {
 
 export const benches: Bench[] = [
   {
+    slug: "composer-2.5",
+    name: "composer 2.5",
+    folder: "composer-2.5",
+    router: "react-router 8 framework",
+    routes: [
+      "/",
+      "/play/:videoId",
+      "/playlists",
+      "/playlists/:id",
+      "/themes",
+      "/watch",
+    ],
+    command: "react-router",
+  },
+  {
     slug: "gemini-3.8-flash",
     name: "gemini 3.8 flash",
     folder: "gemini-3.8-flash",
@@ -26,6 +41,21 @@ export const benches: Bench[] = [
       "/watch",
     ],
     command: "vite",
+  },
+  {
+    slug: "grok-4.5",
+    name: "grok 4.5",
+    folder: "grok-4.5",
+    router: "react-router 8 framework",
+    routes: [
+      "/",
+      "/play/:videoId",
+      "/playlists",
+      "/playlists/:id",
+      "/themes",
+      "/watch",
+    ],
+    command: "react-router",
   },
   {
     slug: "grok-4.6",
@@ -69,7 +99,9 @@ export const benches: Bench[] = [
 ]
 
 const displayNames: Record<string, string> = {
+  "composer-2.5": "Composer 2.5",
   "gemini-3.8-flash": "Gemini 3.8 Flash",
+  "grok-4.5": "Grok 4.5",
   "grok-4.6": "Grok 4.6",
   "mimo-v2.5": "Mimo v2.5",
   "muse-spark-1.2": "Muse Spark 1.2",
