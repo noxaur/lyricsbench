@@ -26,7 +26,14 @@ function installDir(dir, label) {
     return
   }
   if (existsSync(path.join(dir, "package-lock.json"))) {
-    run("npm", ["ci"], dir)
+    try {
+      run("npm", ["ci"], dir)
+    } catch {
+      // ponytail: several booth lockfiles are stale vs package.json, so npm ci
+      // dies on Vercel. Upgrade: regenerate each package-lock.json.
+      console.warn(`[${label}] npm ci failed; falling back to npm install`)
+      execSync("npm install", { cwd: dir, stdio: "inherit", env: process.env })
+    }
     return
   }
   execSync("npm install", { cwd: dir, stdio: "inherit" })

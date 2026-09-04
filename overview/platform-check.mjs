@@ -1,5 +1,10 @@
+import { readFileSync } from "node:fs"
+import path from "node:path"
+import { fileURLToPath } from "node:url"
 import { adaptSource, patchReactRouterConfig, publicBenchUrl } from "./bench-adapt.mjs"
 import { loadBenches } from "./bench-catalog.mjs"
+
+const overviewDir = path.dirname(fileURLToPath(import.meta.url))
 
 const failures = []
 
@@ -50,6 +55,12 @@ assert(root.pathname === "/benches/gemini-3.8-flash/", `root pathname ${root.pat
 const patched = patchReactRouterConfig(`export default {\n  ssr: true,\n} satisfies Config;\n`, "/benches/grok-4.6")
 assert(patched.includes('basename: "/benches/grok-4.6"'), "rr config basename missing")
 assert(patched.includes('mode: "initial"'), "rr config should disable lazy manifest")
+
+const installer = readFileSync(path.join(overviewDir, "install-all.mjs"), "utf8")
+assert(
+  installer.includes("falling back to npm install"),
+  "install-all must survive stale booth lockfiles on Vercel",
+)
 
 if (failures.length) {
   console.error(failures.join("\n"))
