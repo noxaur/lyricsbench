@@ -104,6 +104,14 @@ export const benches: Bench[] = [
     routes: ["/", "/play/:videoId", "/watch"],
     command: "vite",
   },
+  {
+    slug: "muse-spark-1.3-v2",
+    name: "muse spark 1.3 v2",
+    folder: "muse-spark-1.3-v2",
+    router: "react-router 8",
+    routes: ["/", "/play/:videoId", "/watch"],
+    command: "vite",
+  },
 ]
 
 const displayNames: Record<string, string> = {
@@ -115,6 +123,7 @@ const displayNames: Record<string, string> = {
   "mimo-v2.5": "Mimo v2.5",
   "muse-spark-1.2": "Muse Spark 1.2",
   "muse-spark-1.3": "Muse Spark 1.3",
+  "muse-spark-1.3-v2": "Muse Spark 1.3 v2",
 }
 
 export function getBenchDisplayName(bench: Bench): string {
