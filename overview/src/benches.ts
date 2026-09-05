@@ -64,6 +64,14 @@ export const benches: Bench[] = [
     command: "react-router",
   },
   {
+    slug: "gemini-3.1-pro",
+    name: "gemini 3.1 pro",
+    folder: "gemini-3.1-pro",
+    router: "react-router 8 framework",
+    routes: ["/"],
+    command: "react-router",
+  },
+  {
     slug: "gemini-3.8-flash",
     name: "gemini 3.8 flash",
     folder: "gemini-3.8-flash",
@@ -104,17 +112,27 @@ export const benches: Bench[] = [
     routes: ["/", "/play/:videoId", "/watch"],
     command: "vite",
   },
+  {
+    slug: "muse-spark-1.3-v2",
+    name: "muse spark 1.3 v2",
+    folder: "muse-spark-1.3-v2",
+    router: "react-router 8",
+    routes: ["/", "/play/:videoId", "/watch"],
+    command: "vite",
+  },
 ]
 
 const displayNames: Record<string, string> = {
   "gpt-5.6-terra": "GPT-5.6 Terra",
   "composer-2.5": "Composer 2.5",
+  "gemini-3.1-pro": "Gemini 3.1 Pro",
   "gemini-3.8-flash": "Gemini 3.8 Flash",
   "grok-4.5": "Grok 4.5",
   "grok-4.6": "Grok 4.6",
   "mimo-v2.5": "Mimo v2.5",
   "muse-spark-1.2": "Muse Spark 1.2",
   "muse-spark-1.3": "Muse Spark 1.3",
+  "muse-spark-1.3-v2": "Muse Spark 1.3 v2",
 }
 
 export function getBenchDisplayName(bench: Bench): string {

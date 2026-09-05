@@ -1,51 +1,59 @@
-import { execFileSync, execSync } from "node:child_process"
 import { existsSync } from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { loadBenches } from "./bench-catalog.mjs"
+import { jobCount, mapPool, pmEnv, runCommand, shouldSkipInstall, writeStamp } from "./build-cache.mjs"
 
 const overviewDir = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.resolve(overviewDir, "..")
+const env = pmEnv(rootDir)
 
-function run(command, args, cwd) {
-  execFileSync(command, args, { cwd, stdio: "inherit", env: process.env })
-}
-
-function installDir(dir, label) {
+async function installDir(dir, label) {
   if (!existsSync(path.join(dir, "package.json"))) {
     throw new Error(`${label}: missing package.json`)
   }
-  const skipLocal = !process.env.VERCEL && existsSync(path.join(dir, "node_modules"))
-  if (skipLocal) {
-    console.log(`==> [${label}] node_modules present, skipping install`)
+  if (shouldSkipInstall(dir)) {
+    console.log(`==> [${label}] node_modules cache hit, skipping install`)
     return
   }
   console.log(`==> [${label}] installing`)
   if (existsSync(path.join(dir, "pnpm-lock.yaml"))) {
-    run("pnpm", ["install", "--frozen-lockfile"], dir)
+    await runCommand("pnpm", ["install", "--frozen-lockfile", "--store-dir", env.PNPM_STORE_DIR], dir, env)
+    writeStamp(dir)
     return
   }
   if (existsSync(path.join(dir, "package-lock.json"))) {
-    try {
-      run("npm", ["ci"], dir)
-    } catch {
-      // ponytail: several booth lockfiles are stale vs package.json, so npm ci
-      // dies on Vercel. Upgrade: regenerate each package-lock.json.
-      console.warn(`[${label}] npm ci failed; falling back to npm install`)
-      execSync("npm install", { cwd: dir, stdio: "inherit", env: process.env })
+    const hasMods = existsSync(path.join(dir, "node_modules"))
+    if (hasMods) {
+      // Reuse Vercel's restored node_modules instead of `npm ci`, which deletes it.
+      await runCommand("npm", ["install", "--prefer-offline", "--no-audit", "--no-fund"], dir, env)
+    } else {
+      try {
+        await runCommand("npm", ["ci", "--prefer-offline", "--no-audit", "--no-fund"], dir, env)
+      } catch {
+        // ponytail: several booth lockfiles are stale vs package.json, so npm ci
+        // dies on Vercel. Upgrade: regenerate each package-lock.json.
+        console.warn(`[${label}] npm ci failed; falling back to npm install`)
+        await runCommand("npm", ["install", "--prefer-offline", "--no-audit", "--no-fund"], dir, env)
+      }
     }
+    writeStamp(dir)
     return
   }
-  execSync("npm install", { cwd: dir, stdio: "inherit" })
+  await runCommand("npm", ["install", "--prefer-offline", "--no-audit", "--no-fund"], dir, env)
+  writeStamp(dir)
 }
 
 const benches = loadBenches()
 if (benches.length === 0) throw new Error("no benches in src/benches.ts")
 
-installDir(rootDir, "lyricsbench")
-installDir(overviewDir, "overview")
-for (const bench of benches) {
-  installDir(path.join(rootDir, bench.folder), bench.slug)
-}
+const jobs = jobCount()
+console.log(`==> install jobs: ${jobs}`)
+await installDir(rootDir, "lyricsbench")
+await mapPool(
+  [{ dir: overviewDir, label: "overview" }, ...benches.map((bench) => ({ dir: path.join(rootDir, bench.folder), label: bench.slug }))],
+  jobs,
+  ({ dir, label }) => installDir(dir, label),
+)
 
 console.log(`==> installed overview + ${benches.length} benches`)

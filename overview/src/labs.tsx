@@ -40,6 +40,7 @@ export const frontierLabs: FrontierLab[] = [
     name: "Google DeepMind",
     shortName: "Google",
     models: [
+      { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro", slug: "gemini-3.1-pro", status: "live" },
       { id: "gemini-3.8-flash", name: "Gemini 3.8 Flash", slug: "gemini-3.8-flash", status: "live" },
     ],
   },
