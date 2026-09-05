@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { Link, useNavigate } from "react-router"
-import { frontierLabs, getLabForSlug, ProviderLogo } from "./labs"
+import { frontierLabs, getLabForSlug, liveSlugFor, ProviderLogo } from "./labs"
 
 export function ModelChrome({
   currentSlug,
@@ -107,10 +107,10 @@ export function ModelChrome({
 
                   <div className="dropdown-models-sublist">
                     {lab.models.map((model) => {
-                      const isLive = model.status === "live" && model.slug
-                      const isCurrent = model.slug === currentSlug
+                      const slug = liveSlugFor(model)
+                      const isCurrent = slug === currentSlug
 
-                      if (!isLive) {
+                      if (!slug) {
                         return (
                           <div
                             key={model.id}
@@ -133,7 +133,7 @@ export function ModelChrome({
                           className={`dropdown-model-row live ${isCurrent ? "current" : ""}`}
                           onClick={() => {
                             setIsOpen(false)
-                            navigate(`/b/${model.slug}`)
+                            navigate(`/b/${slug}`)
                           }}
                         >
                           <span className="model-row-left">

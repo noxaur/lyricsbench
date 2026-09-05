@@ -1,3 +1,6 @@
+import { liveSlug } from "./lab-live.mjs"
+import { benches } from "./benches"
+
 export type LabModel = {
   id: string
   name: string
@@ -56,7 +59,7 @@ export const frontierLabs: FrontierLab[] = [
     shortName: "OpenAI",
     models: [
       { id: "gpt-5.6-terra", name: "GPT-5.6 Terra", slug: "gpt-5.6-terra", status: "live" },
-      { id: "gpt-5.6-luna", name: "GPT 5.6 Luna", status: "coming_soon" },
+      { id: "gpt-5.6-luna", name: "GPT-5.6 Luna", slug: "gpt-5.6-luna", status: "coming_soon" },
     ],
   },
   {
@@ -78,8 +81,14 @@ export const frontierLabs: FrontierLab[] = [
   },
 ]
 
+export function liveSlugFor(model: LabModel) {
+  return liveSlug(model, benches)
+}
+
 export function getLabForSlug(slug: string): FrontierLab | undefined {
-  return frontierLabs.find((lab) => lab.models.some((m) => m.slug === slug))
+  return frontierLabs.find((lab) =>
+    lab.models.some((model) => model.slug === slug || model.id === slug || liveSlugFor(model) === slug),
+  )
 }
 
 export function getLabById(id: string): FrontierLab | undefined {
@@ -96,8 +105,9 @@ export function groupBenchesByLab<T extends { slug: string }>(
   for (const lab of frontierLabs) {
     const labItems: T[] = []
     for (const model of lab.models) {
-      if (!model.slug) continue
-      const item = bySlug.get(model.slug)
+      const slug = liveSlug(model, items)
+      if (!slug) continue
+      const item = bySlug.get(slug)
       if (item) {
         labItems.push(item)
         used.add(item.slug)
