@@ -64,6 +64,14 @@ export const benches: Bench[] = [
     command: "react-router",
   },
   {
+    slug: "gemini-3.1-pro",
+    name: "gemini 3.1 pro",
+    folder: "gemini-3.1-pro",
+    router: "react-router 8 framework",
+    routes: ["/"],
+    command: "react-router",
+  },
+  {
     slug: "gemini-3.8-flash",
     name: "gemini 3.8 flash",
     folder: "gemini-3.8-flash",
@@ -117,6 +125,7 @@ export const benches: Bench[] = [
 const displayNames: Record<string, string> = {
   "gpt-5.6-terra": "GPT-5.6 Terra",
   "composer-2.5": "Composer 2.5",
+  "gemini-3.1-pro": "Gemini 3.1 Pro",
   "gemini-3.8-flash": "Gemini 3.8 Flash",
   "grok-4.5": "Grok 4.5",
   "grok-4.6": "Grok 4.6",
